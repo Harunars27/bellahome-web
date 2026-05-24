@@ -1533,19 +1533,8 @@ footer{
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,.1,100);
-  camera.position.set(0,0,5);
 
-  // Resize
-  function resize(){
-    const w=window.innerWidth,h=window.innerHeight;
-    renderer.setSize(w,h);
-    camera.aspect=w/h;
-    camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener('resize',resize);
-
-  // Create waving curtain mesh
+  // Perdeleri oluştur
   const segsX=40,segsY=60;
   const geo=new THREE.PlaneGeometry(10,12,segsX,segsY);
   const mat=new THREE.MeshPhongMaterial({
@@ -1557,17 +1546,37 @@ footer{
   });
 
   const mesh=new THREE.Mesh(geo,mat);
-  mesh.position.set(3,0,0);
   scene.add(mesh);
 
-  // Second curtain panel
   const mesh2=new THREE.Mesh(geo.clone(),mat.clone());
   mesh2.material.color.set(0xe8dfd0);
   mesh2.material.opacity=.5;
-  mesh2.position.set(-2,0,-1);
   scene.add(mesh2);
 
-  // Lighting
+  // Resize - Mobil için kamera ve pozisyon ayarı eklendi
+  function resize(){
+    const w=window.innerWidth,h=window.innerHeight;
+    renderer.setSize(w,h);
+    camera.aspect=w/h;
+    
+    if(w < 768) {
+      // TELEFON EKRANI: Kamerayı uzaklaştır, perdeleri merkeze topla
+      camera.position.set(0, 0, 10);
+      mesh.position.set(1.2, 0, 0);
+      mesh2.position.set(-1.2, 0, -1);
+    } else {
+      // BİLGİSAYAR EKRANI: Geniş görüş açısı
+      camera.position.set(0, 0, 5);
+      mesh.position.set(3, 0, 0);
+      mesh2.position.set(-2, 0, -1);
+    }
+    
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  // Işıklandırma
   const ambientLight=new THREE.AmbientLight(0xfaf8f4,.8);
   scene.add(ambientLight);
   const dirLight=new THREE.DirectionalLight(0xc9a96e,.6);
